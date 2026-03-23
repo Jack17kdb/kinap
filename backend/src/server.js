@@ -28,7 +28,7 @@ app.use(helmet({
 	contentSecurityPolicy: {
 		directives: {
 			"default-src": ["'self'"],
-			"img-src": ["'self'", "data:", "https://res.cloudinary.com", "https://images.unsplash.com"],
+			"img-src": ["'self'", "data:", "https://res.cloudinary.com", "https://images.unsplash.com", "https://i.pravatar.cc"],
 			"script-src": ["'self'", "'unsafe-inline'"],
 		},
 	},
