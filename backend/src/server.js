@@ -30,6 +30,7 @@ app.use(helmet({
 			"default-src": ["'self'"],
 			"img-src": ["'self'", "data:", "https://res.cloudinary.com", "https://images.unsplash.com", "https://i.pravatar.cc"],
 			"script-src": ["'self'", "'unsafe-inline'"],
+			"connect-src": ["'self'", "data:", "https://res.cloudinary.com", "https://images.unsplash.com", "https://i.pravatar.cc", "https://kinap.onrender.com"],
 		},
 	},
 }));
