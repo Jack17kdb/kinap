@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { FaEnvelope, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore.js';
 
 const VerifyEmail = () => {
@@ -9,12 +9,18 @@ const VerifyEmail = () => {
   const { verifyEmail } = useAuthStore();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const run = async () => {
       if (!token) { setStatus('error'); return; }
       const success = await verifyEmail(token);
-      setStatus(success ? 'success' : 'error');
+      if(success) {
+            setStatus('success');
+            setTimeout(() => Navigate('/login'), 2500);
+      } else {
+            setStatus('error');
+      }
     };
     run();
   }, [token]);

@@ -4,6 +4,7 @@ import { FaSearch, FaBars, FaTimes, FaArrowLeft, FaUser, FaSignOutAlt } from 're
 import { MessageCircle } from 'lucide-react';
 import { useAuthStore } from '../store/authStore.js';
 import { useItemStore } from '../store/itemStore.js';
+import { useChatStore } from '../store/chatStore.js';
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -12,11 +13,15 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { logout, authUser } = useAuthStore();
   const { searchItems } = useItemStore();
+  const { conversations, getRecentChats } = useChatStore();
+  const totalUnread = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
   const navigate = useNavigate();
   const profileDropdownRef = useRef(null);
 
   const navLinkStyles = ({ isActive }) =>
     `text-md font-medium transition-colors ${isActive ? 'text-orange-500' : 'text-gray-700 hover:text-orange-500'}`;
+
+  useEffect(() => { getRecentChats(); }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -71,8 +76,13 @@ const Navbar = () => {
                 </form>
               </div>
 
-              <NavLink to="/chat">
+              <NavLink to="/chat" className="relative">
                 <MessageCircle className="cursor-pointer text-gray-500 transition hover:text-black" />
+                {totalUnread > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-orange-500 text-white text-[10px] flex items-center justify-center font-bold">
+                    {totalUnread > 9 ? '9+' : totalUnread}
+                  </span>
+                )}
               </NavLink>
 
               <div ref={profileDropdownRef} className="relative">

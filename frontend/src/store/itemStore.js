@@ -72,12 +72,12 @@ export const useItemStore = create((set) => ({
         }
     },
 
-    // Backend returns { message, item } — extract the item
     updateItemStatus: async(id, status) => {
         try {
             set({ isUpdatingStatus: true });
             const res = await axiosInstance.put(`/item/${id}/status`, { status });
-            set({ item: res.data.item });
+            const fresh = await axiosInstance.get(`/item/${id}`);
+            set({ item: fresh.data });
             toast.success("Status updated successfully");
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
