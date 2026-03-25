@@ -3,13 +3,18 @@ import mongoose from "mongoose";
 const itemSchema = new mongoose.Schema({
     title: String,
     description: String,
-    image: String,
-    category: String,
-    status: String,
+    image: {
+        type: String,
+        default: ""
+    },
+    category: { type: String, index: true },
+    location: { type: String, index: true },
+    status: { type: String, index: true },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: true,
+        index: true
     }
 }, { timestamps: true });
 

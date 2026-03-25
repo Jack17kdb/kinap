@@ -9,6 +9,8 @@ import redisLimiter from './middleware/rateLimiter.js';
 import authRoutes from './routes/authRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
+import adminRoutes from './routes/adminRoutes.js'
+import reviewRoutes from './routes/reviewRoutes.js'
 import { app, server } from './lib/socket.js';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -48,6 +50,8 @@ if(process.env.NODE_ENV === 'production'){
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', messageRoutes);
 app.use('/api/item', itemRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/review', reviewRoutes);
 
 
 if(process.env.NODE_ENV === 'production'){

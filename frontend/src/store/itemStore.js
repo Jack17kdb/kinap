@@ -2,21 +2,26 @@ import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
 import toast from 'react-hot-toast';
 
-export const useItemStore = create((set) => ({
+export const useItemStore = create((set, get) => ({
     items: [],
     item: null,
+    matches: [],
+    categories: [],
+    locations: [],
     isFetchingItems: false,
     isCreatingItems: false,
     isDeletingItems: false,
     isFetchingItemDetails: false,
     isUpdatingStatus: false,
-    isSearching: false,
+    isFetchingMatches: false,
+    isFetchingCategories: false,
+    isFetchingLocations: false,
 
-    createItem: async(data) => {
+    createFoundItem: async (data) => {
         try {
             set({ isCreatingItems: true });
-            await axiosInstance.post("/item/create", data);
-            toast.success("Item created successfully");
+            await axiosInstance.post('/item/create', data);
+            toast.success('Item posted successfully');
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         } finally {
@@ -24,10 +29,24 @@ export const useItemStore = create((set) => ({
         }
     },
 
-    getItems: async() => {
+    createLostItem: async (data) => {
+        try {
+            set({ isCreatingItems: true });
+            await axiosInstance.post('/item/lost', data);
+            toast.success('Lost item reported successfully');
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        } finally {
+            set({ isCreatingItems: false });
+        }
+    },
+
+    getItems: async (filters = {}) => {
         try {
             set({ isFetchingItems: true });
-            const res = await axiosInstance.get("/item/items");
+            const params = new URLSearchParams();
+            Object.entries(filters).forEach(([k, v]) => { if (v) params.append(k, v); });
+            const res = await axiosInstance.get(`/item/items?${params.toString()}`);
             set({ items: res.data });
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
@@ -36,19 +55,7 @@ export const useItemStore = create((set) => ({
         }
     },
 
-    getItemsByCategory: async(category) => {
-        try {
-            set({ isFetchingItems: true });
-            const res = await axiosInstance.get(`/item/items?category=${category}`);
-            set({ items: res.data });
-        } catch (error) {
-            toast.error(error.response?.data?.message || error.message);
-        } finally {
-            set({ isFetchingItems: false });
-        }
-    },
-
-    getItemById: async(itemId) => {
+    getItemById: async (itemId) => {
         try {
             set({ isFetchingItemDetails: true });
             const res = await axiosInstance.get(`/item/${itemId}`);
@@ -60,25 +67,13 @@ export const useItemStore = create((set) => ({
         }
     },
 
-    searchItems: async(query) => {
-        try {
-            set({ isSearching: true });
-            const res = await axiosInstance.get(`/item/search?query=${query}`);
-            set({ items: res.data });
-        } catch (error) {
-            toast.error(error.response?.data?.message || error.message);
-        } finally {
-            set({ isSearching: false });
-        }
-    },
-
-    updateItemStatus: async(id, status) => {
+    updateItemStatus: async (id, status) => {
         try {
             set({ isUpdatingStatus: true });
-            const res = await axiosInstance.put(`/item/${id}/status`, { status });
+            await axiosInstance.put(`/item/${id}/status`, { status });
             const fresh = await axiosInstance.get(`/item/${id}`);
             set({ item: fresh.data });
-            toast.success("Status updated successfully");
+            toast.success('Status updated successfully');
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         } finally {
@@ -86,15 +81,51 @@ export const useItemStore = create((set) => ({
         }
     },
 
-    deleteItem: async(id) => {
+    deleteItem: async (id) => {
         try {
             set({ isDeletingItems: true });
             await axiosInstance.delete(`/item/${id}`);
-            toast.success("Item deleted successfully");
+            toast.success('Item deleted successfully');
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         } finally {
             set({ isDeletingItems: false });
+        }
+    },
+
+    getPotentialMatches: async (id) => {
+        try {
+            set({ isFetchingMatches: true });
+            const res = await axiosInstance.get(`/item/${id}/matches`);
+            set({ matches: res.data });
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        } finally {
+            set({ isFetchingMatches: false });
+        }
+    },
+
+    getCategories: async () => {
+        try {
+            set({ isFetchingCategories: true });
+            const res = await axiosInstance.get('/item/categories');
+            set({ categories: res.data });
+        } catch (error) {
+            console.log('Error fetching categories', error);
+        } finally {
+            set({ isFetchingCategories: false });
+        }
+    },
+
+    getLocations: async () => {
+        try {
+            set({ isFetchingLocations: true });
+            const res = await axiosInstance.get('/item/locations');
+            set({ locations: res.data });
+        } catch (error) {
+            console.log('Error fetching locations', error);
+        } finally {
+            set({ isFetchingLocations: false });
         }
     },
 }));
