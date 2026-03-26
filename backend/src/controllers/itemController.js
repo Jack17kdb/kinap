@@ -12,9 +12,11 @@ const createItem = async(req, res) => {
             return res.status(400).json({ message: "Please fill in all required fields" });
         }
 
+        let imageUrl = "";
+        
         try{
             const uploadResponse = await cloudinary.uploader.upload(image);
-            const imageUrl = uploadResponse.secure_url;
+            imageUrl = uploadResponse.secure_url;
         } catch(error) {
             console.log("Error uploading image: ", error);
             return res.status(500).json({ "message": error.message })
@@ -41,7 +43,7 @@ const createItem = async(req, res) => {
 
 const getItems = async(req, res) => {
     try {
-        const { category, location, date, search } = req.query;
+        const { category, location, date, search, status } = req.query;
         
         const filter = {};
 
@@ -51,6 +53,10 @@ const getItems = async(req, res) => {
 
         if(location){
             filter.location = location;
+        }
+
+        if (status) {
+            filter.status = status;
         }
 
         if(date){

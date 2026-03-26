@@ -5,6 +5,20 @@ import { motion } from 'motion/react';
 import { useAuthStore } from '../store/authStore.js';
 import { useItemStore } from '../store/itemStore.js';
 
+const getCategoryIcon = (cat) => {
+    const c = cat?.toLowerCase() || '';
+    if (c.includes('key')) return '🔑';
+    if (c.includes('id') || c.includes('card')) return '🪪';
+    if (c.includes('phone') || c.includes('gadget')) return '📱';
+    if (c.includes('book') || c.includes('note')) return '📖';
+    if (c.includes('bag') || c.includes('backpack')) return '🎒';
+    if (c.includes('wallet') || c.includes('purse')) return '👜';
+    if (c.includes('cloth')) return '👕';
+    if (c.includes('watch')) return '⌚';
+    if (c.includes('glass') || c.includes('spectacle')) return '👓';
+    return '📦';
+};
+
 const Homepage = () => {
     const { authUser } = useAuthStore();
     const { items, getItems, isFetchingItems } = useItemStore();
@@ -58,7 +72,11 @@ const Homepage = () => {
                         </button>
                     </div>
                     {isFetchingItems ? (
-                        <div className="text-center py-10 text-gray-400">Loading...</div>
+                        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                            {[...Array(8)].map((_, i) => (
+                                <div key={i} className="h-52 bg-gray-200 rounded-xl animate-pulse" />
+                            ))}
+                        </div>
                     ) : items.length === 0 ? (
                         <div className="text-center py-10 text-gray-400">No items posted yet.</div>
                     ) : (
@@ -67,27 +85,38 @@ const Homepage = () => {
                                 <div
                                     key={item._id}
                                     onClick={() => navigate(`/item/${item._id}`)}
-                                    className="overflow-hidden rounded-xl bg-white shadow-sm transition hover:shadow-md cursor-pointer"
+                                    className="group overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer flex flex-col"
                                 >
-                                    {item.image ? (
-                                        <img src={item.image} className="h-36 w-full object-cover" />
-                                    ) : (
-                                        <div className="h-36 bg-gray-100 flex items-center justify-center">
-                                            <span className="text-4xl">❓</span>
-                                        </div>
-                                    )}
-                                    <div className="p-3">
-                                        <div className="flex items-center justify-between mb-1">
-                                            <h2 className="text-sm font-semibold line-clamp-1">{item.title}</h2>
-                                            <span className={`rounded-full px-2 py-0.5 text-xs shrink-0 ml-1 ${
-                                                item.status === 'Lost' ? 'bg-red-100 text-red-600' :
-                                                item.status === 'Found' ? 'bg-green-100 text-green-600' :
-                                                'bg-blue-100 text-blue-600'
+                                    <div className="relative h-36 w-full overflow-hidden bg-gray-100">
+                                        {item.image ? (
+                                            <img
+                                                src={item.image}
+                                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                alt={item.title}
+                                            />
+                                        ) : (
+                                            <div className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 to-white">
+                                                <span className="text-4xl mb-1 group-hover:scale-110 transition-transform duration-300">
+                                                    {getCategoryIcon(item.category)}
+                                                </span>
+                                                <span className="text-[9px] font-bold text-orange-400 uppercase tracking-widest">No Photo</span>
+                                            </div>
+                                        )}
+                                        <div className="absolute top-2 left-2">
+                                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider shadow ${
+                                                item.status === 'Lost' ? 'bg-red-500 text-white' :
+                                                item.status === 'Found' ? 'bg-green-600 text-white' :
+                                                'bg-blue-600 text-white'
                                             }`}>
                                                 {item.status}
                                             </span>
                                         </div>
-                                        <p className="text-xs text-gray-500">{item.owner?.username} • {item.category}</p>
+                                    </div>
+                                    <div className="p-3 flex-1 flex flex-col">
+                                        <h2 className="text-sm font-bold text-gray-800 line-clamp-1 mb-1 group-hover:text-orange-600 transition-colors">
+                                            {item.title}
+                                        </h2>
+                                        <p className="text-xs text-gray-500 mt-auto">{item.owner?.username} • {item.category}</p>
                                     </div>
                                 </div>
                             ))}

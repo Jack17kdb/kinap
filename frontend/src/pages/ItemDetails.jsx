@@ -96,8 +96,23 @@ const ItemDetails = () => {
                                     />
                                 </AnimatePresence>
                             ) : (
-                                <div className="h-full flex items-center justify-center">
-                                    <span className="text-7xl">❓</span>
+                                <div className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 to-white">
+                                    <span className="text-7xl mb-2">
+                                        {(() => {
+                                            const c = item.category?.toLowerCase() || '';
+                                            if (c.includes('key')) return '🔑';
+                                            if (c.includes('id') || c.includes('card')) return '🪪';
+                                            if (c.includes('phone') || c.includes('gadget')) return '📱';
+                                            if (c.includes('book') || c.includes('note')) return '📖';
+                                            if (c.includes('bag') || c.includes('backpack')) return '🎒';
+                                            if (c.includes('wallet') || c.includes('purse')) return '👜';
+                                            if (c.includes('cloth')) return '👕';
+                                            if (c.includes('watch')) return '⌚';
+                                            if (c.includes('glass')) return '👓';
+                                            return '📦';
+                                        })()}
+                                    </span>
+                                    <span className="text-xs font-bold text-orange-400 uppercase tracking-widest">No Photo Attached</span>
                                 </div>
                             )}
                             {images.length > 1 && (

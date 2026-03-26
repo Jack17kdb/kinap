@@ -25,7 +25,7 @@ const AdminLayout = ({ children }) => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex">
+        <div className="h-screen bg-gray-100 flex overflow-hidden">
             {/* Overlay */}
             {open && (
                 <div
@@ -36,13 +36,13 @@ const AdminLayout = ({ children }) => {
 
             {/* Drawer */}
             <aside className={`
-                fixed top-0 left-0 h-full w-64 bg-blue-900 text-white z-40 flex flex-col
+                fixed top-0 left-0 h-screen w-64 bg-blue-900 text-white z-40 flex flex-col
                 transform transition-transform duration-300
                 ${open ? 'translate-x-0' : '-translate-x-full'}
-                md:translate-x-0 md:static md:flex
+                md:translate-x-0 md:static md:flex md:h-screen md:shrink-0
             `}>
                 {/* Logo */}
-                <div className="flex items-center justify-between px-6 py-5 border-b border-blue-800">
+                <div className="flex items-center justify-between px-6 py-5 border-b border-blue-800 shrink-0">
                     <div>
                         <h1 className="text-lg font-bold">Kinap Admin</h1>
                         <p className="text-xs text-blue-300">{authUser?.email}</p>
@@ -75,7 +75,7 @@ const AdminLayout = ({ children }) => {
                 </nav>
 
                 {/* Footer */}
-                <div className="px-3 py-4 border-t border-blue-800">
+                <div className="px-3 py-4 border-t border-blue-800 shrink-0">
                     <button
                         onClick={handleLogout}
                         className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-blue-200 hover:bg-blue-800 hover:text-white transition w-full"
@@ -87,9 +87,9 @@ const AdminLayout = ({ children }) => {
             </aside>
 
             {/* Main */}
-            <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
                 {/* Top bar (mobile) */}
-                <header className="md:hidden bg-white shadow-sm px-4 py-3 flex items-center gap-3 sticky top-0 z-20">
+                <header className="md:hidden bg-white shadow-sm px-4 py-3 flex items-center gap-3 sticky top-0 z-20 shrink-0">
                     <button onClick={() => setOpen(true)} className="text-gray-600 hover:text-gray-800">
                         <Menu size={22} />
                     </button>

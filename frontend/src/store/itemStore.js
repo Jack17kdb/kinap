@@ -4,11 +4,15 @@ import toast from 'react-hot-toast';
 
 export const useItemStore = create((set, get) => ({
     items: [],
+    lostItems: [],
+    foundItems: [],
     item: null,
     matches: [],
     categories: [],
     locations: [],
     isFetchingItems: false,
+    isFetchingLostItems: false,
+    isFetchingFoundItems: false,
     isCreatingItems: false,
     isDeletingItems: false,
     isFetchingItemDetails: false,
@@ -26,6 +30,18 @@ export const useItemStore = create((set, get) => ({
             toast.error(error.response?.data?.message || error.message);
         } finally {
             set({ isCreatingItems: false });
+        }
+    },
+
+    searchItems: async(query) => {
+        try{
+            set({ isFetchingItems: true });
+            const res = await axiosInstance.get(`/item/search?query=${query}`);
+            set({ items: res.data });
+        } catch(error){
+           toast.error(error.response?.data?.message || error.message);
+        } finally {
+            set({ isFetchingItems: false });
         }
     },
 
@@ -52,6 +68,34 @@ export const useItemStore = create((set, get) => ({
             toast.error(error.response?.data?.message || error.message);
         } finally {
             set({ isFetchingItems: false });
+        }
+    },
+
+    getLostItems: async (filters = {}) => {
+        try {
+            set({ isFetchingLostItems: true });
+            const params = new URLSearchParams();
+            Object.entries({ ...filters, status: 'Lost' }).forEach(([k, v]) => { if (v) params.append(k, v); });
+            const res = await axiosInstance.get(`/item/items?${params.toString()}`);
+            set({ lostItems: res.data });
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        } finally {
+            set({ isFetchingLostItems: false });
+        }
+    },
+
+    getFoundItems: async (filters = {}) => {
+        try {
+            set({ isFetchingFoundItems: true });
+            const params = new URLSearchParams();
+            Object.entries({ ...filters, status: 'Found' }).forEach(([k, v]) => { if (v) params.append(k, v); });
+            const res = await axiosInstance.get(`/item/items?${params.toString()}`);
+            set({ foundItems: res.data });
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        } finally {
+            set({ isFetchingFoundItems: false });
         }
     },
 
