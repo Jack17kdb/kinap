@@ -16,7 +16,7 @@ const LostItems = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            getLostItems({filters});
+            getLostItems({ ...filters, status: "Lost" });
         }, filters.search ? 300 : 0);
         return () => clearTimeout(timer);
     }, [filters]);
